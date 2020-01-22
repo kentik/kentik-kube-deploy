@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubetags
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: kubetags
+rules:
+- apiGroups:
+    - ""
+    - apps
+  resources:
+    - deployments
+    - pods
+    - replicasets
+    - services
+  verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: kubetags
+subjects:
+  - kind: ServiceAccount
+    namespace: default
+    name: kubetags
+roleRef:
+  kind: ClusterRole
+  name: kubetags
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubetags
+spec:
+  selector:
+    matchLabels:
+      app: kubetags
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kubetags
+    spec:
+      containers:
+        - name: kubetags
+          image: kentik/kubetags:v0.9.0-2-g46f8b7f
+          env:
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
+            - name: KENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: INTERVAL
+              value: "60s"
+          imagePullPolicy: Always
+      serviceAccount: kubetags
+---

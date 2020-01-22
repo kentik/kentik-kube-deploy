@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ulimit -l 131072
+
+exec /usr/bin/kappa $*

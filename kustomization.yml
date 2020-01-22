@@ -1,0 +1,27 @@
+namespace: kentik
+resources:
+  - kappa-agent.yml
+  - kappa-agg.yml
+  - kubetags.yml
+images:
+  - name: kentik/kappa
+    newTag: "6ad243a"
+configMapGenerator:
+  - name: kappa-config
+    literals:
+      - capture=ens3|veth.*
+      - device=kappa_test
+      - plan=1234
+      - bytecode=/bytecode/bpf_kern-4.15.18.o
+  - name: kappa-bytecode
+    files:
+      - bytecode/bpf_kern-4.16.18.o
+  - name: kappa-init
+    files:
+      - init/exec
+      - init/trace
+secretGenerator:
+  - name: kentik-api-secrets
+    literals:
+      - email=test@example.com
+      - token=asdf1234

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kappa-agg
+  labels:
+    app: kappa
+spec:
+  selector:
+    matchLabels:
+      app: kappa
+  template:
+    metadata:
+      labels:
+        app: kappa
+    spec:
+      containers:
+        - name: kappa
+          image: kentik/kappa
+          command: ["/usr/bin/kappa"]
+          args:
+            - "-v"
+            - "agg"
+            - "0.0.0.0:1234"
+          env:
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
+            - name: KENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: KENTIK_DEVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: device
+            - name: KENTIK_PLAN
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: plan
+            - name: RUST_LIB_BACKTRACE
+              value: "1"
+          ports:
+            - containerPort: 1234
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kappa-agg
+  labels:
+    app: kappa
+spec:
+  type: ClusterIP
+  selector:
+    app: kappa
+  ports:
+    - protocol: TCP
+      port: 1234
