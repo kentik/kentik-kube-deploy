@@ -25,6 +25,8 @@ spec:
             - "/init/exec"
             - "-v"
             - "agent"
+            - "--node"
+            - "$(KAPPA_NODE_NAME)"
             - "--capture"
             - "$(capture)"
             - "--sample"
@@ -36,6 +38,10 @@ spec:
             - configMapRef:
                 name: kappa-config
           env:
+            - name: KAPPA_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
             - name: RUST_LIB_BACKTRACE
               value: "1"
           volumeMounts:

@@ -5,7 +5,7 @@ resources:
   - kubetags.yml
 images:
   - name: kentik/kappa
-    newTag: "6ad243a"
+    newTag: "fbfbe59"
 configMapGenerator:
   - name: kappa-config
     literals:
