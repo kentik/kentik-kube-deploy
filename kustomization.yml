@@ -16,6 +16,9 @@ configMapGenerator:
   - name: kappa-bytecode
     files:
       - bytecode/bpf_kern-4.16.18.o
+      - bytecode/kappa_bpf-amzn2-4.14.154.o
+      - bytecode/kappa_bpf-cos-4.14.138.o
+      - bytecode/kappa_bpf-debian-4.19.0-6.o
   - name: kappa-init
     files:
       - init/exec
