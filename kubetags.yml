@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
         - name: kubetags
-          image: kentik/kubetags:v0.9.0-2-g46f8b7f
+          image: kentik/kubetags
           env:
             - name: KENTIK_EMAIL
               valueFrom:

@@ -6,6 +6,8 @@ resources:
 images:
   - name: kentik/kappa
     newTag: "fbfbe59"
+  - name: kentik/kubetags
+    newTag: "v0.9.0-2-g46f8b7f"
 configMapGenerator:
   - name: kappa-config
     literals:
