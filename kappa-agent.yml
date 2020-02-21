@@ -33,7 +33,7 @@ spec:
             - "1:4"
             - "--bytecode"
             - "$(bytecode)"
-            - "$(KAPPA_AGG_SERVICE_HOST):$(KAPPA_AGG_SERVICE_PORT)"
+            - "$(KAPPA_AGG_SERVICE_HOST):4000"
           envFrom:
             - configMapRef:
                 name: kappa-config
@@ -48,7 +48,7 @@ spec:
             - name: debugfs
               mountPath: /sys/kernel/debug
             - name: bytecode
-              mountPath: /bytecode2
+              mountPath: /bytecode
             - name: init
               mountPath: /init
           imagePullPolicy: Always

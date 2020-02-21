@@ -2,12 +2,12 @@ namespace: kentik
 resources:
   - kappa-agent.yml
   - kappa-agg.yml
-  - kubetags.yml
+  - kubeinfo.yml
 images:
   - name: kentik/kappa
-    newTag: "fbfbe59"
-  - name: kentik/kubetags
-    newTag: "v0.9.0-2-g46f8b7f"
+    newTag: "0.0.2"
+  - name: kentik/kubeinfo
+    newTag: "1.0.0"
 configMapGenerator:
   - name: kappa-config
     literals:

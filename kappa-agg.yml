@@ -20,7 +20,7 @@ spec:
           args:
             - "-v"
             - "agg"
-            - "0.0.0.0:1234"
+            - "0.0.0.0:4000"
           env:
             - name: KENTIK_EMAIL
               valueFrom:
@@ -45,7 +45,8 @@ spec:
             - name: RUST_LIB_BACKTRACE
               value: "1"
           ports:
-            - containerPort: 1234
+            - containerPort: 4000
+            - containerPort: 4001
 ---
 apiVersion: v1
 kind: Service
@@ -58,5 +59,9 @@ spec:
   selector:
     app: kappa
   ports:
-    - protocol: TCP
-      port: 1234
+    - name: agg
+      protocol: TCP
+      port: 4000
+    - name: aug
+      protocol: TCP
+      port: 4001
