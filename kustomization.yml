@@ -14,12 +14,12 @@ configMapGenerator:
       - capture=ens3|veth.*
       - device=kappa_test
       - plan=1234
-      - bytecode=/bytecode/bpf_kern-4.15.18.o
+      - bytecode=/bytecode/kappa_bpf_azure_5.4.0-1059.o
   - name: kappa-bytecode
     files:
-      - bytecode/bpf_kern-4.16.18.o
-      - bytecode/kappa_bpf-amzn2-4.14.154.o
-      - bytecode/kappa_bpf-cos-4.14.138.o
+      - bytecode/kappa_bpf_azure_5.4.0-1059.o
+      - bytecode/kappa_bpf_amzn2-5.4.144-67.229.o
+      - bytecode/kappa_bpf_cos_5.4.o
       - bytecode/kappa_bpf-debian-4.19.0-6.o
   - name: kappa-init
     files:
