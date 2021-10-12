@@ -16,7 +16,7 @@ spec:
       containers:
         - name: kappa
           image: kentik/kappa
-          command: ["/usr/bin/kappa"]
+          command: ["/opt/kentik/kappa/kappa"]
           args:
             - "-v"
             - "agg"
