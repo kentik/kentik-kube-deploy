@@ -20,9 +20,8 @@ spec:
           image: kentik/kappa
           securityContext:
             privileged: true
-          command: ["/bin/bash"]
+          command: ["/opt/kentik/kappa/kappa"]
           args:
-            - "/init/exec"
             - "-v"
             - "agent"
             - "--node"
@@ -30,7 +29,7 @@ spec:
             - "--capture"
             - "$(capture)"
             - "--sample"
-            - "1:4"
+            - "1:1"
             - "--bytecode"
             - "$(bytecode)"
             - "$(KAPPA_AGG_SERVICE_HOST):4000"
