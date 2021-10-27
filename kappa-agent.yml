@@ -29,7 +29,7 @@ spec:
             - "--capture"
             - "$(capture)"
             - "--sample"
-            - "1:1"
+            - "1:4"
             - "--bytecode"
             - "$(bytecode)"
             - "$(KAPPA_AGG_SERVICE_HOST):4000"
