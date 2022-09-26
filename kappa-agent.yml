@@ -20,7 +20,7 @@ spec:
           image: kentik/kappa
           securityContext:
             privileged: true
-          command: ["/opt/kentik/kappa/kappa"]
+          command: ["/bin/busybox", "sh", "/init/exec"]
           args:
             - "-v"
             - "agent"
@@ -30,8 +30,6 @@ spec:
             - "$(capture)"
             - "--sample"
             - "1:4"
-            - "--bytecode"
-            - "$(bytecode)"
             - "$(KAPPA_AGG_SERVICE_HOST):4000"
           envFrom:
             - configMapRef:
@@ -51,13 +49,15 @@ spec:
             - name: init
               mountPath: /init
           imagePullPolicy: Always
+
+      initContainers: []
+
       volumes:
         - name: debugfs
           hostPath:
             path: /sys/kernel/debug
         - name: bytecode
-          configMap:
-            name: kappa-bytecode
+          emptyDir: {}
         - name: init
           configMap:
             name: kappa-init

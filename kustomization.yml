@@ -1,11 +1,12 @@
 namespace: kentik
 resources:
+  - namespace.yml
   - kappa-agent.yml
   - kappa-agg.yml
   - kubeinfo.yml
 images:
   - name: kentik/kappa
-    newTag: "latest"
+    newTag: "1.1.0"
   - name: kentik/kubeinfo
     newTag: "1.0.0"
 configMapGenerator:
@@ -14,21 +15,19 @@ configMapGenerator:
       - capture=ens3|veth.*
       - device=kappa_test
       - plan=1234
-      - bytecode=/bytecode/kappa_bpf-5.4.0-88-generic.o
-  - name: kappa-bytecode
-    files:
-      - bytecode/kappa_bpf_azure_5.4.0-1059.o
-      - bytecode/kappa_bpf_amzn2-5.4.144-67.229.o
-      - bytecode/kappa_bpf_cos_5.4.o
-      - bytecode/kappa_bpf-debian-4.19.0-6.o
-      - bytecode/kappa_bpf-cos-4.14.138.o
-      - bytecode/kappa_bpf-amzn2-4.14.154.o
-      - bytecode/bpf_kern-4.16.18.o
-      - bytecode/kappa_bpf-5.4.0-88-generic.o
+      - bytecode=x86_64/kappa_bpf-ubuntu-5.4.o
   - name: kappa-init
     files:
       - init/exec
+      - init/fetch
       - init/trace
+patchesJson6902:
+#   - target:
+#       group: "apps"
+#       version: v1
+#       kind: DaemonSet
+#       name: kappa-agent
+#     path: kappa-bytecode.yml
 secretGenerator:
   - name: kentik-api-secrets
     literals:

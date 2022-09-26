@@ -2,4 +2,4 @@
 
 ulimit -l 131072
 
-exec /usr/bin/kappa $*
+exec /opt/kentik/kappa/kappa $*
