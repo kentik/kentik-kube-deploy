@@ -15,14 +15,19 @@ configMapGenerator:
       - capture=ens3|veth.*
       - device=kappa_test
       - plan=1234
-      - bytecode=/bytecode/kappa_bpf-ubuntu-5.4.o
-  - name: kappa-bytecode
-    files:
-      - bytecode/kappa_bpf-ubuntu-5.4.o
+      - bytecode=x86_64/kappa_bpf-ubuntu-5.4.o
   - name: kappa-init
     files:
       - init/exec
+      - init/fetch
       - init/trace
+patchesJson6902:
+#   - target:
+#       group: "apps"
+#       version: v1
+#       kind: DaemonSet
+#       name: kappa-agent
+#     path: kappa-bytecode.yml
 secretGenerator:
   - name: kentik-api-secrets
     literals:

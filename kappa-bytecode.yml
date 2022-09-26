@@ -1,0 +1,25 @@
+- op: add
+  path: "/spec/template/spec/containers/0/args/-"
+  value: --bytecode
+
+- op: add
+  path: "/spec/template/spec/containers/0/args/-"
+  value: /bytecode/bytecode.o
+
+- op: add
+  path: "/spec/template/spec/initContainers/-"
+  value:
+    name: bytecode
+    image: debian
+    command: ["/bin/bash", "/init/fetch"]
+    args:
+      - "/bytecode/bytecode.o"
+      - "$(bytecode)"
+    envFrom:
+      - configMapRef:
+          name: kappa-config
+    volumeMounts:
+      - name: bytecode
+        mountPath: /bytecode
+      - name: init
+        mountPath: /init

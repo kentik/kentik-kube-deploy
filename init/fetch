@@ -1,0 +1,7 @@
+#!/bin/bash
+
+apt-get update && apt install -y curl
+
+echo "fetch bytecode $2"
+
+curl -sSfL -o "$1" "https://bytecode.kentiklabs.com/kappa/$2"
