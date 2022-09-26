@@ -4,4 +4,4 @@ apt-get update && apt-get install -y strace
 
 ulimit -l 131072
 
-exec /usr/bin/strace /usr/bin/kappa $*
+exec /usr/bin/strace /opt/kentik/kappa/kappa $*

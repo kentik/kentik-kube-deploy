@@ -20,7 +20,7 @@ spec:
           image: kentik/kappa
           securityContext:
             privileged: true
-          command: ["/opt/kentik/kappa/kappa"]
+          command: ["/bin/busybox", "sh", "/init/exec"]
           args:
             - "-v"
             - "agent"
