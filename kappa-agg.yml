@@ -22,6 +22,11 @@ spec:
             - "agg"
             - "0.0.0.0:4000"
           env:
+            - name: KENTIK_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: region
             - name: KENTIK_EMAIL
               valueFrom:
                 secretKeyRef:
