@@ -6,9 +6,9 @@ resources:
   - kubeinfo.yml
 images:
   - name: kentik/kappa
-    newTag: "1.1.0"
+    newTag: "1.1.1"
   - name: kentik/kubeinfo
-    newTag: "1.0.0"
+    newTag: "1.0.1"
 configMapGenerator:
   - name: kappa-config
     literals:
