@@ -7,11 +7,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: kappa
+      app: kappa-agg
   template:
     metadata:
       labels:
-        app: kappa
+        app: kappa-agg
     spec:
       containers:
         - name: kappa
@@ -62,7 +62,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: kappa
+    app: kappa-agg
   ports:
     - name: agg
       protocol: TCP
