@@ -3,7 +3,7 @@ resources:
   - namespace.yml
   - kappa-agent.yml
   - kappa-agg.yml
-  - kubeinfo.yml
+  - kubemeta.yml
 images:
   - name: kentik/kappa
     newTag: "1.1.1"
@@ -13,9 +13,9 @@ configMapGenerator:
   - name: kappa-config
     literals:
       - capture=ens3|veth.*
-      - device=kappa_test
+      - device=__DEVICE__
       - region=US
-      - plan=1234
+      - plan=__PLAN__
       - bytecode=x86_64/kappa_bpf-ubuntu-5.4.o
   - name: kappa-init
     files:
@@ -32,5 +32,5 @@ patchesJson6902:
 secretGenerator:
   - name: kentik-api-secrets
     literals:
-      - email=test@example.com
-      - token=asdf1234
+      - email=__EMAIL__
+      - token=__TOKEN__
