@@ -12,7 +12,7 @@ images:
 configMapGenerator:
   - name: kappa-config
     literals:
-      - capture=ens3|veth.*
+      - capture=__CAPTURE__
       - device=__DEVICE__
       - region=US
       - plan=__PLAN__

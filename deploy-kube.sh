@@ -9,10 +9,18 @@
 # kubernetes cluster)
 #
 # ######################
-PLAN=1234567890
+#
+# You must set these four as appropriate for your account and device
+#
+PLAN=0123456789
 EMAIL=customer_email@example.com
-TOKEN=123abc_customer_kentik_token_cba321
-DEVICE=a_device_name
+TOKEN=123abc_your_customer_kentik_token_cba321
+DEVICE=your_device_name
+#
+# CAPTURE already has a workable default.  Don't change this unless you know
+# for sure it's what you want.
+#
+CAPTURE='ens3|veth.*|eth*'
 # ######################
 #
 #   END CONFIGURATION
@@ -42,10 +50,12 @@ done
 
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
-echo "Plan: $PLAN"
+echo "Plan:   $PLAN"
 echo "Device: $DEVICE"
-echo "Email: $EMAIL"
-echo "Token: $TOKEN"
+echo "Email:  $EMAIL"
+echo "Token:  $TOKEN"
+echo
+echo "Capture: $CAPTURE"
 echo
 read -p "Do you want to proceed (y/n)? " confirmation
 
@@ -54,7 +64,7 @@ if [[ ! "${confirmation}" =~ ^[yY]$ ]]; then
     exit 1
 fi
 
-sed "s/__PLAN__/$PLAN/g; s/__DEVICE__/$DEVICE/g; s/__EMAIL__/$EMAIL/g; s/__TOKEN__/$TOKEN/g" \
+sed 's/__CAPTURE__/'"$CAPTURE"'/g; s/__DEVICE__/'"$DEVICE"'/g; s/__EMAIL__/'"$EMAIL"'/g; s/__TOKEN__/'"$TOKEN"'/g' \
     kustomization-template.yml > kustomization.yml
 
 # Set kubeconfig and context variables if provided
