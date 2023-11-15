@@ -20,7 +20,7 @@ DEVICE=your_device_name
 # CAPTURE already has a workable default.  Don't change this unless you know
 # for sure it's what you want.
 #
-CAPTURE='ens3|veth.*|eth*'
+CAPTURE='ens*|veth.*|eth*'
 # ######################
 #
 #   END CONFIGURATION
