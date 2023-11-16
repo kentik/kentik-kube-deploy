@@ -16,7 +16,7 @@ PLAN=0123456789
 EMAIL=customer_email@example.com
 TOKEN=123abc_your_customer_kentik_token_cba321
 CLUSTER=your_cluster_name
-CLOUDPROVIDER=aws_or_gcp_etc
+CLOUDPROVIDER=aws_or_gcp_or_azure_or_prem
 #
 # CAPTURE already has a workable default.  Don't change this unless you know
 # for sure it's what you want.
@@ -48,6 +48,24 @@ while getopts 'c:f:h' flag; do
         *) display_help ;;
     esac
 done
+
+# Check for valid CLOUDPROVIDER value
+valid_providers=("aws" "gcp" "azure" "prem")
+is_valid_provider=false
+
+for provider in "${valid_providers[@]}"; do
+    if [[ "$CLOUDPROVIDER" == "$provider" ]]; then
+        is_valid_provider=true
+        break
+    fi
+done
+
+if [[ "$is_valid_provider" == false ]]; then
+    echo
+    echo "Error: Invalid CLOUDPROVIDER value ($CLOUDPROVIDER). Must be one of: aws, gcp, azure, or prem"
+    echo
+    exit 1
+fi
 
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
