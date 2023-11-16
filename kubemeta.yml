@@ -63,7 +63,7 @@ spec:
                 secretKeyRef:
                   name: kentik-api-secrets
                   key: email
-            - name: KENTIK_TOKEN
+            - name: KENTIK_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: kentik-api-secrets
