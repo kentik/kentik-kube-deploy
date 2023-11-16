@@ -25,7 +25,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: kubemeta
-    namespace: default
+    namespace: kentik
 roleRef:
   kind: ClusterRole
   name: kubemeta
@@ -49,5 +49,28 @@ spec:
       containers:
         - name: kubemeta
           image: kentik/kubemeta:latest
-          args: ["--check-interval", "20"]
+          args:
+            - "--check-interval"
+            - "20"
+          env:
+            - name: CLOUD
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: cloudprovider
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
+            - name: KENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: CLUSTER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: device
           imagePullPolicy: Always

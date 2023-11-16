@@ -15,7 +15,8 @@
 PLAN=0123456789
 EMAIL=customer_email@example.com
 TOKEN=123abc_your_customer_kentik_token_cba321
-DEVICE=your_device_name
+CLUSTER=your_cluster_name
+CLOUDPROVIDER=aws_or_gcp_etc
 #
 # CAPTURE already has a workable default.  Don't change this unless you know
 # for sure it's what you want.
@@ -50,10 +51,11 @@ done
 
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
-echo "Plan:   $PLAN"
-echo "Device: $DEVICE"
-echo "Email:  $EMAIL"
-echo "Token:  $TOKEN"
+echo "Plan:    $PLAN"
+echo "Email:   $EMAIL"
+echo "Token:   $TOKEN"
+echo "Cloud:   $CLOUD"
+echo "Cluster: $CLUSTER"
 echo
 echo "Capture: $CAPTURE"
 echo
@@ -64,8 +66,14 @@ if [[ ! "${confirmation}" =~ ^[yY]$ ]]; then
     exit 1
 fi
 
-sed 's/__CAPTURE__/'"$CAPTURE"'/g; s/__DEVICE__/'"$DEVICE"'/g; s/__EMAIL__/'"$EMAIL"'/g; s/__TOKEN__/'"$TOKEN"'/g' \
-    kustomization-template.yml > kustomization.yml
+sed 's/__CAPTURE__/'"$CAPTURE"'/g; '\
+    's/__CLOUD__/'"$CLOUDPROVIDER"'/g; '\
+    's/__CLUSTER__/'"$CLUSTER"'/g; '\
+    's/__EMAIL__/'"$EMAIL"'/g; '\
+    's/__PLAN__/'"$PLAN"'/g; '\
+    's/__TOKEN__/'"$TOKEN"'/g' \
+     kustomization-template.yml > kustomization.yml
+
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""

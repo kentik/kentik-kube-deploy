@@ -13,7 +13,7 @@ configMapGenerator:
   - name: kappa-config
     literals:
       - capture=__CAPTURE__
-      - device=__DEVICE__
+      - device=__CLUSTER__
       - region=US
       - plan=__PLAN__
       - bytecode=x86_64/kappa_bpf-ubuntu-5.4.o
@@ -22,6 +22,9 @@ configMapGenerator:
       - init/exec
       - init/fetch
       - init/trace
+  - name: kube-config
+    literals:
+      - cloudprovider=__CLOUDPROVIDER__
 patchesJson6902:
 #   - target:
 #       group: "apps"
