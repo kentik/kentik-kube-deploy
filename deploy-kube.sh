@@ -54,7 +54,7 @@ echo
 echo "Plan:    $PLAN"
 echo "Email:   $EMAIL"
 echo "Token:   $TOKEN"
-echo "Cloud:   $CLOUD"
+echo "Cloud:   $CLOUDPROVIDER"
 echo "Cluster: $CLUSTER"
 echo
 echo "Capture: $CAPTURE"
@@ -66,14 +66,14 @@ if [[ ! "${confirmation}" =~ ^[yY]$ ]]; then
     exit 1
 fi
 
-sed 's/__CAPTURE__/'"$CAPTURE"'/g; '\
-    's/__CLOUD__/'"$CLOUDPROVIDER"'/g; '\
-    's/__CLUSTER__/'"$CLUSTER"'/g; '\
-    's/__EMAIL__/'"$EMAIL"'/g; '\
-    's/__PLAN__/'"$PLAN"'/g; '\
-    's/__TOKEN__/'"$TOKEN"'/g' \
-     kustomization-template.yml > kustomization.yml
-
+sed \
+    -e 's/__CAPTURE__/'"$CAPTURE"'/g' \
+    -e 's/__CLOUDPROVIDER__/'"$CLOUDPROVIDER"'/g' \
+    -e 's/__CLUSTER__/'"$CLUSTER"'/g' \
+    -e 's/__EMAIL__/'"$EMAIL"'/g' \
+    -e 's/__PLAN__/'"$PLAN"'/g' \
+    -e 's/__TOKEN__/'"$TOKEN"'/g' \
+    kustomization-template.yml > kustomization.yml
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""
