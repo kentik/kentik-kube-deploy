@@ -9,10 +9,11 @@ Additional settings can be found in [kustomization-template.yml](kustomization-t
 `deploy-kube.sh` is the deployment script.
 
 To run `deploy-kube.sh`, you'll need to have at least one kubernetes context and your Kentik plan information:
-- Plan ID number
+- Your Kentik Plan ID number
 - Your Kentik registered email address
 - Your Kentik token/API key
-- Your device name (e.g., the name of the Kubernetes cluster)
+- Your cloud provider name (e.g., aws)
+- Your kubernetes cluster name
 
 ## Kube Installation
 ### Clone this repo
