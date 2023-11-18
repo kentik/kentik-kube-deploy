@@ -49,6 +49,7 @@ spec:
       containers:
         - name: kubemeta
           image: kentik/kubemeta:latest
+          imagePullPolicy: Always
           args:
             - "--check-interval"
             - "20"
@@ -73,4 +74,3 @@ spec:
                 configMapKeyRef:
                   name: kappa-config
                   key: device
-          imagePullPolicy: Always

@@ -1,6 +1,6 @@
-# kube-cfg - Kube configuration and deployment to Kubernetes
+# kentik-kube-deploy - Kube configuration and deployment to Kubernetes
 
-kube-cfg contains the Kubernetes deployment descriptors necessary to deploy the kube components into a Kubernetes
+kentik-kube-deploy contains the Kubernetes deployment descriptors necessary to deploy the kube components into a Kubernetes
 cluster. These descriptors utilize kustomize which is available in kubectl v1.14+.
 
 Most user-serviceable settings are configured via the configuration section in [deploy-kube.sh](deploy-kube.sh).
@@ -18,8 +18,8 @@ To run `deploy-kube.sh`, you'll need to have at least one kubernetes context and
 ## Kube Installation
 ### Clone this repo
 ```bash
-git clone https://github.com/kentik/kube-cfg.git
-cd kube-cfg
+git clone https://github.com/kentik/kentik-kube-deploy.git
+cd kentik-kube-deploy
 ```
 
 ### Configure the script
