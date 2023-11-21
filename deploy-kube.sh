@@ -18,10 +18,10 @@ TOKEN=123abc_your_customer_kentik_token_cba321
 CLUSTER=your_cluster_name
 CLOUDPROVIDER=aws_or_gcp_or_azure_or_prem
 #
-# CAPTURE already has a workable default.  Don't change this unless you know
-# for sure it's what you want.
+# Don't change the below values unless you know for sure it's what you want.
 #
 CAPTURE='en*|veth.*|eth*'
+KUBEMETA_VERSION=sha-c9723a0
 # ######################
 #
 #   END CONFIGURATION
@@ -69,13 +69,14 @@ fi
 
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
-echo "Plan:    $PLAN"
-echo "Email:   $EMAIL"
-echo "Token:   $TOKEN"
-echo "Cloud:   $CLOUDPROVIDER"
-echo "Cluster: $CLUSTER"
+echo "Plan:     $PLAN"
+echo "Email:    $EMAIL"
+echo "Token:    $TOKEN"
+echo "Cloud:    $CLOUDPROVIDER"
+echo "Cluster:  $CLUSTER"
 echo
-echo "Capture: $CAPTURE"
+echo "Capture:  $CAPTURE"
+echo "Kubemeta: $KUBEMETA_VERSION"
 echo
 read -p "Do you want to proceed (y/n)? " confirmation
 
@@ -92,6 +93,8 @@ sed \
     -e 's/__PLAN__/'"$PLAN"'/g' \
     -e 's/__TOKEN__/'"$TOKEN"'/g' \
     kustomization-template.yml > kustomization.yml
+
+sed -i "s/__KUBEMETA_VERSION__/$KUBEMETA_VERSION/" kubemeta.yml
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""
