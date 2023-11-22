@@ -12,11 +12,11 @@
 #
 # You must set these four as appropriate for your account and device
 #
-PLAN=0123456789
-EMAIL=customer_email@example.com
-TOKEN=123abc_your_customer_kentik_token_cba321
-CLUSTER=your_cluster_name
-CLOUDPROVIDER=aws_or_gcp_or_azure_or_prem
+PLAN=5354
+EMAIL=tma+kentikdemonew@kentik.com
+TOKEN=c381ac67174620173f41d0c0dabdb07c
+CLUSTER=gke-cluster-kentik-standard
+CLOUDPROVIDER=gcp
 #
 # Don't change the below values unless you know for sure it's what you want.
 #
@@ -94,7 +94,17 @@ sed \
     -e 's/__TOKEN__/'"$TOKEN"'/g' \
     kustomization-template.yml > kustomization.yml
 
-sed -i "s/__KUBEMETA_VERSION__/$KUBEMETA_VERSION/" kubemeta.yml
+SEDCMD="s/__KUBEMETA_VERSION__/$KUBEMETA_VERSION/"
+OS=$(uname)
+
+# macOS's sed behaves a little differently
+if [[ "$OS" == "Darwin" ]]; then
+    # macOS (BSD sed)
+    sed -i '' "$SED_COMMAND" kubemeta.yml
+else
+    # Linux (GNU sed)
+    sed -i "$SED_COMMAND" kubemeta.yml
+fi
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""
