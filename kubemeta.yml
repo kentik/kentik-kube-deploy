@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubemeta
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubemeta
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "nodes", "pods", "services"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubemeta
+subjects:
+  - kind: ServiceAccount
+    name: kubemeta
+    namespace: kentik
+roleRef:
+  kind: ClusterRole
+  name: kubemeta
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubemeta-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubemeta
+  template:
+    metadata:
+      labels:
+        app: kubemeta
+    spec:
+      serviceAccountName: kubemeta
+      containers:
+        - name: kubemeta
+          image: kentik/kubemeta
+          imagePullPolicy: Always
+          args:
+            - "--check-interval"
+            - "20"
+          env:
+            - name: CLOUD
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: cloudprovider
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
+            - name: KENTIK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: CLUSTER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: device
