@@ -3,10 +3,13 @@ resources:
   - namespace.yml
   - kappa-agent.yml
   - kappa-agg.yml
+  - kubeinfo.yml
   - kubemeta.yml
 images:
   - name: kentik/kappa
     newTag: "1.1.1"
+  - name: kentik/kubeinfo
+    newTag: "1.0.1"
   - name: kentik/kubemeta
     newTag: __KUBEMETA_VERSION__
 configMapGenerator:
