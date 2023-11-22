@@ -48,7 +48,7 @@ spec:
       serviceAccountName: kubemeta
       containers:
         - name: kubemeta
-          image: kentik/kubemeta:sha-c9723a0
+          image: kentik/kubemeta
           imagePullPolicy: Always
           args:
             - "--check-interval"

@@ -8,7 +8,7 @@ images:
   - name: kentik/kappa
     newTag: "1.1.1"
   - name: kentik/kubemeta
-    newTag: "latest"
+    newTag: __KUBEMETA_VERSION__
 configMapGenerator:
   - name: kappa-config
     literals:
