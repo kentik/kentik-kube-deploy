@@ -74,3 +74,8 @@ spec:
                 configMapKeyRef:
                   name: kappa-config
                   key: device
+            - name: MAX_PAYLOAD_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: maxgrpcpayload
