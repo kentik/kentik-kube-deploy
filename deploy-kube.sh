@@ -21,7 +21,8 @@ CLOUDPROVIDER=aws_or_gcp_or_azure_or_prem
 # Don't change the below values unless you know for sure it's what you want.
 #
 CAPTURE='en*|veth.*|eth*'
-KUBEMETA_VERSION=sha-68b9457
+KUBEMETA_VERSION=sha-6589ba8
+MAX_PAYLOAD_SIZE_MB=8
 # ######################
 #
 #   END CONFIGURATION
@@ -67,16 +68,21 @@ if [[ "$is_valid_provider" == false ]]; then
     exit 1
 fi
 
+# convert MAX_PAYLOAD_SIZE_MB to bytes
+MAX_PAYLOAD_SIZE_BYTES=$((MAX_PAYLOAD_SIZE_MB * 1024 * 1024))
+
+
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
-echo "Plan:     $PLAN"
-echo "Email:    $EMAIL"
-echo "Token:    $TOKEN"
-echo "Cloud:    $CLOUDPROVIDER"
-echo "Cluster:  $CLUSTER"
+echo "Plan:       $PLAN"
+echo "Email:      $EMAIL"
+echo "Token:      $TOKEN"
+echo "Cloud:      $CLOUDPROVIDER"
+echo "Cluster:    $CLUSTER"
 echo
-echo "Capture:  $CAPTURE"
-echo "Kubemeta: $KUBEMETA_VERSION"
+echo "Capture:    $CAPTURE"
+echo "Kubemeta:   $KUBEMETA_VERSION"
+echo "MaxPayload: ${MAX_PAYLOAD_SIZE_MB}MB"
 echo
 read -p "Do you want to proceed (y/n)? " confirmation
 
@@ -91,6 +97,7 @@ sed \
     -e 's/__CLUSTER__/'"$CLUSTER"'/g' \
     -e 's/__EMAIL__/'"$EMAIL"'/g' \
     -e 's/__KUBEMETA_VERSION__/'\"$KUBEMETA_VERSION\"'/g' \
+    -e 's/__MAXGRPCPAYLOAD__/'"$MAX_PAYLOAD_SIZE_BYTES"'/g' \
     -e 's/__PLAN__/'"$PLAN"'/g' \
     -e 's/__TOKEN__/'"$TOKEN"'/g' \
     kustomization-template.yml > kustomization.yml
