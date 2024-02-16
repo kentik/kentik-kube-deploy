@@ -53,6 +53,8 @@ spec:
           args:
             - "--check-interval"
             - "20"
+            - "--addr"
+            - "$(GRPC_ENDPOINT):443"
           env:
             - name: CLOUD
               valueFrom:
@@ -74,6 +76,11 @@ spec:
                 configMapKeyRef:
                   name: kappa-config
                   key: device
+            - name: GRPC_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: grpcendpoint
             - name: MAX_PAYLOAD_SIZE
               valueFrom:
                 configMapKeyRef:

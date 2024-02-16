@@ -29,7 +29,7 @@ spec:
             - "--capture"
             - "$(capture)"
             - "--sample"
-            - "1:4"
+            - "$(sampleratio)"
             - "$(KAPPA_AGG_SERVICE_HOST):4000"
           envFrom:
             - configMapRef:
