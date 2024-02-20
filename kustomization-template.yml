@@ -17,8 +17,9 @@ configMapGenerator:
     literals:
       - capture=__CAPTURE__
       - device=__CLUSTER__
-      - region=US
+      - region=__ACCOUNTREGION__
       - plan=__PLAN__
+      - sampleratio=__KAPPA_SAMPLE_RATIO__
       - bytecode=x86_64/kappa_bpf-ubuntu-5.4.o
   - name: kappa-init
     files:
@@ -28,6 +29,7 @@ configMapGenerator:
   - name: kube-config
     literals:
       - cloudprovider=__CLOUDPROVIDER__
+      - grpcendpoint=__GRPCENDPOINT__
       - maxgrpcpayload=__MAXGRPCPAYLOAD__
 patchesJson6902:
 #   - target:
