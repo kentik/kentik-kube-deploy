@@ -61,16 +61,6 @@ spec:
                 configMapKeyRef:
                   name: kube-config
                   key: cloudprovider
-            - name: KENTIK_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: kentik-api-secrets
-                  key: email
-            - name: KENTIK_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: kentik-api-secrets
-                  key: token
             - name: CLUSTER_NAME
               valueFrom:
                 configMapKeyRef:
@@ -81,6 +71,31 @@ spec:
                 configMapKeyRef:
                   name: kube-config
                   key: grpcendpoint
+            - name: KENTIK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: KENTIK_CLOUDREGION
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: cloudregion
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
+            - name: KENTIK_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: environment
+            - name: KENTIK_UUID
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: uuid
             - name: MAX_PAYLOAD_SIZE
               valueFrom:
                 configMapKeyRef:
