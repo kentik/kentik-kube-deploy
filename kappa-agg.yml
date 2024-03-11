@@ -22,31 +22,51 @@ spec:
             - "agg"
             - "0.0.0.0:4000"
           env:
-            - name: KENTIK_REGION
+            - name: KENTIK_CLOUDPROVIDER
               valueFrom:
                 configMapKeyRef:
-                  name: kappa-config
-                  key: region
-            - name: KENTIK_EMAIL
+                  name: kube-config
+                  key: cloudprovider
+            - name: KENTIK_CLOUDREGION
               valueFrom:
-                secretKeyRef:
-                  name: kentik-api-secrets
-                  key: email
-            - name: KENTIK_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: kentik-api-secrets
-                  key: token
+                configMapKeyRef:
+                  name: kube-config
+                  key: cloudregion
             - name: KENTIK_DEVICE
               valueFrom:
                 configMapKeyRef:
                   name: kappa-config
                   key: device
+            - name: KENTIK_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: environment
+            - name: KENTIK_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: email
             - name: KENTIK_PLAN
               valueFrom:
                 configMapKeyRef:
                   name: kappa-config
                   key: plan
+            - name: KENTIK_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: kappa-config
+                  key: region
+            - name: KENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kentik-api-secrets
+                  key: token
+            - name: KENTIK_UUID
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: uuid
             - name: RUST_LIB_BACKTRACE
               value: "1"
           ports:

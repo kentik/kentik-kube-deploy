@@ -29,8 +29,11 @@ configMapGenerator:
   - name: kube-config
     literals:
       - cloudprovider=__CLOUDPROVIDER__
+      - cloudregion=__CLOUDREGION__
+      - environment=__ENVIRONMENT__
       - grpcendpoint=__GRPCENDPOINT__
       - maxgrpcpayload=__MAXGRPCPAYLOAD__
+      - uuid=__UUID__
 patchesJson6902:
 #   - target:
 #       group: "apps"
