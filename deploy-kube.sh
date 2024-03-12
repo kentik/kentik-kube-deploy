@@ -10,7 +10,7 @@
 #
 # ######################
 #
-# You must set these four as appropriate for your account and device
+# You must set these values as appropriate for your account and device
 #
 ACCOUNTREGION=US
 PLAN=0123456789
@@ -64,11 +64,11 @@ get_or_create_cluster_uuid() {
   # Safely create or update the config map using a lock
   if kubectl create configmap "$lock_name" --from-literal=lock=true &>/dev/null; then
     # Lock acquired, proceed with creating or updating the config map
-    kubectl create configmap "$config_map_name" --from-literal="$uuid_key"="$new_uuid" 2>/dev/null || \
-      kubectl patch configmap "$config_map_name" --type=merge -p "{\"data\":{\"$uuid_key\":\"$new_uuid\"}}"
+    kubectl create configmap "$config_map_name" --from-literal="$uuid_key"="$new_uuid" &>/dev/null || \
+      kubectl patch configmap "$config_map_name" --type=merge -p "{\"data\":{\"$uuid_key\":\"$new_uuid\"}}" &>/dev/null
 
     # Release the lock
-    kubectl delete configmap "$lock_name"
+    kubectl delete configmap "$lock_name" &>/dev/null
 
     echo "$new_uuid"
     return 0
@@ -84,7 +84,7 @@ get_or_create_cluster_uuid() {
 
       if ((lock_age > lock_timeout)); then
         # Stale lock detected, attempt to delete it using the UID
-        kubectl delete configmap --uid="$lock_uid"
+        kubectl delete configmap --uid="$lock_uid" &>/dev/null
 
         # Retry the whole process from the beginning
         get_or_create_cluster_uuid
