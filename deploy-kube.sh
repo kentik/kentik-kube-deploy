@@ -24,7 +24,7 @@ CLUSTER=your_cluster_name
 # Don't change the below values unless you know for sure it's what you want.
 #
 CAPTURE='en*|veth.*|eth*'
-KUBEMETA_VERSION=sha-6589ba8
+KUBEMETA_VERSION=sha-63a15e9
 MAX_PAYLOAD_SIZE_MB=16
 KAPPA_SAMPLE_RATIO=1:4
 # ######################
@@ -180,9 +180,8 @@ case $ACCOUNTREGION in
         ;;
 esac
 
-echo
-echo "Generating UUID for this installation..."
 UUID=$(get_or_create_cluster_uuid)
+echo
 echo "UUID: $UUID"
 echo
 
