@@ -61,7 +61,7 @@ spec:
                 configMapKeyRef:
                   name: kube-config
                   key: cloudprovider
-            - name: CLUSTER_NAME
+            - name: KENTIK_CLUSTER_NAME
               valueFrom:
                 configMapKeyRef:
                   name: kappa-config
@@ -76,7 +76,7 @@ spec:
                 secretKeyRef:
                   name: kentik-api-secrets
                   key: token
-            - name: KENTIK_CLOUDREGION
+            - name: KENTIK_CLUSTER_CLOUD_REGION
               valueFrom:
                 configMapKeyRef:
                   name: kube-config
@@ -86,12 +86,12 @@ spec:
                 secretKeyRef:
                   name: kentik-api-secrets
                   key: email
-            - name: KENTIK_ENVIRONMENT
+            - name: KENTIK_CLUSTER_ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
                   name: kube-config
                   key: environment
-            - name: KENTIK_UUID
+            - name: KENTIK_CLUSTER_UUID
               valueFrom:
                 configMapKeyRef:
                   name: kube-config

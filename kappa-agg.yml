@@ -27,21 +27,26 @@ spec:
                 configMapKeyRef:
                   name: kube-config
                   key: cloudprovider
-            - name: KENTIK_CLOUDREGION
+            - name: KENTIK_CLUSTER_CLOUD_REGION
               valueFrom:
                 configMapKeyRef:
                   name: kube-config
                   key: cloudregion
+            - name: KENTIK_CLUSTER_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: environment
+            - name: KENTIK_CLUSTER_UUID
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-config
+                  key: uuid
             - name: KENTIK_DEVICE
               valueFrom:
                 configMapKeyRef:
                   name: kappa-config
                   key: device
-            - name: KENTIK_ENVIRONMENT
-              valueFrom:
-                configMapKeyRef:
-                  name: kube-config
-                  key: environment
             - name: KENTIK_EMAIL
               valueFrom:
                 secretKeyRef:
@@ -62,11 +67,6 @@ spec:
                 secretKeyRef:
                   name: kentik-api-secrets
                   key: token
-            - name: KENTIK_UUID
-              valueFrom:
-                configMapKeyRef:
-                  name: kube-config
-                  key: uuid
             - name: RUST_LIB_BACKTRACE
               value: "1"
           ports:
