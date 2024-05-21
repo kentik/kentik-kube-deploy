@@ -16,6 +16,7 @@ spec:
       containers:
         - name: kappa
           image: kentik/kappa
+          imagePullPolicy: Always
           command: ["/opt/kentik/kappa/kappa"]
           args:
             - "-v"

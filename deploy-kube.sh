@@ -20,13 +20,43 @@ CLOUDPROVIDER=aws_or_gcp_or_azure_or_prem
 CLOUDREGION=eg_us-west-2_or_something_custom_for_prem
 ENVIRONMENT=free_form_such_as_production_or_staging_or_dev_or_custom
 CLUSTER=your_cluster_name
+
 #
 # Don't change the below values unless you know for sure it's what you want.
 #
 CAPTURE='en*|veth.*|eth*'
 KUBEMETA_VERSION=sha-63a15e9
-MAX_PAYLOAD_SIZE_MB=16
+MAX_PAYLOAD_SIZE_MB=64
 KAPPA_SAMPLE_RATIO=1:4
+
+# ######################
+#
+# RAM / CPU limits
+#   'request' values are the minimum resources that the pod will be guaranteed
+#   'limit' values are the maximum resources that the pod will be allowed to use
+#
+#   cpu is measured in millicores (m), memory is measured in bytes (e.g., 100Mi)
+#
+KAPPA_AGG_CPU_REQUEST=5m        # default: 5m
+KAPPA_AGG_CPU_LIMIT=50m         # default: 50m
+KAPPA_AGG_MEM_REQUEST=100Mi     # default: 100Mi
+KAPPA_AGG_MEM_LIMIT=1Gi         # default: 1Gi
+
+KAPPA_AGENT_CPU_REQUEST=5m      # default: 5m
+KAPPA_AGENT_CPU_LIMIT=50m       # default: 50m
+KAPPA_AGENT_MEM_REQUEST=150Mi   # default: 150Mi
+KAPPA_AGENT_MEM_LIMIT=2Gi       # default: 2Gi
+
+KUBEINFO_CPU_REQUEST=5m         # default: 5m
+KUBEINFO_CPU_LIMIT=50m          # default: 50m
+KUBEINFO_MEM_REQUEST=100Mi      # default: 100Mi
+KUBEINFO_MEM_LIMIT=1Gi          # default: 1Gi
+
+KUBEMETA_CPU_REQUEST=5m         # default: 5m
+KUBEMETA_CPU_LIMIT=50m          # default: 50m
+KUBEMETA_MEM_REQUEST=100Mi      # default: 100Mi
+KUBEMETA_MEM_LIMIT=1Gi          # default: 1Gi
+
 # ######################
 #
 #   END CONFIGURATION
@@ -141,7 +171,7 @@ if [[ "$is_valid_provider" == false ]]; then
 fi
 
 # convert MAX_PAYLOAD_SIZE_MB to bytes
-MAX_PAYLOAD_SIZE_BYTES=$((MAX_PAYLOAD_SIZE_MB * 1024 * 1024))
+MAXGRPCPAYLOAD=$((MAX_PAYLOAD_SIZE_MB * 1024 * 1024))
 
 
 echo "Going to apply the kube yaml configuration with the following values:"
@@ -159,6 +189,15 @@ echo "Capture:        $CAPTURE"
 echo "Kappa Sample:   $KAPPA_SAMPLE_RATIO"
 echo "Kubemeta:       $KUBEMETA_VERSION"
 echo "MaxPayload:     ${MAX_PAYLOAD_SIZE_MB}MB"
+echo
+echo "Kappa Agent CPU Request/Limit: ${KAPPA_AGENT_CPU_REQUEST}/${KAPPA_AGENT_CPU_LIMIT}"
+echo "Kappa Agent Mem Request/Limit: ${KAPPA_AGENT_MEM_REQUEST}/${KAPPA_AGENT_MEM_LIMIT}"
+echo "Kappa Agg CPU Request/Limit:   ${KAPPA_AGG_CPU_REQUEST}/${KAPPA_AGG_CPU_LIMIT}"
+echo "Kappa Agg Mem Request/Limit:   ${KAPPA_AGG_MEM_REQUEST}/${KAPPA_AGG_MEM_LIMIT}"
+echo "Kubeinfo CPU Request/Limit:    ${KUBEINFO_CPU_REQUEST}/${KUBEINFO_CPU_LIMIT}"
+echo "Kubeinfo Mem Request/Limit:    ${KUBEINFO_MEM_REQUEST}/${KUBEINFO_MEM_LIMIT}"
+echo "Kubemeta CPU Request/Limit:    ${KUBEMETA_CPU_REQUEST}/${KUBEMETA_CPU_LIMIT}"
+echo "Kubemeta Mem Request/Limit:    ${KUBEMETA_MEM_REQUEST}/${KUBEMETA_MEM_LIMIT}"
 echo
 read -p "Do you want to proceed (y/n)? " confirmation
 
@@ -185,22 +224,48 @@ echo
 echo "UUID: $UUID"
 echo
 
-sed \
-    -e 's/__ACCOUNTREGION__/'"$ACCOUNTREGION"'/g' \
-    -e 's/__CAPTURE__/'\"$CAPTURE\"'/g' \
-    -e 's/__CLOUDPROVIDER__/'"$CLOUDPROVIDER"'/g' \
-    -e 's/__CLOUDREGION__/'"$CLOUDREGION"'/g' \
-    -e 's/__CLUSTER__/'"$CLUSTER"'/g' \
-    -e 's/__EMAIL__/'"$EMAIL"'/g' \
-    -e 's/__ENVIRONMENT__/'"$ENVIRONMENT"'/g' \
-    -e 's/__GRPCENDPOINT__/'"$GRPCENDPOINT"'/g' \
-    -e 's/__KAPPA_SAMPLE_RATIO__/'"$KAPPA_SAMPLE_RATIO"'/g' \
-    -e 's/__KUBEMETA_VERSION__/'\"$KUBEMETA_VERSION\"'/g' \
-    -e 's/__MAXGRPCPAYLOAD__/'"$MAX_PAYLOAD_SIZE_BYTES"'/g' \
-    -e 's/__PLAN__/'"$PLAN"'/g' \
-    -e 's/__TOKEN__/'"$TOKEN"'/g' \
-    -e 's/__UUID__/'"$UUID"'/g' \
-    kustomization-template.yml > kustomization.yml
+vars=(
+    "ACCOUNTREGION"
+    "CAPTURE"
+    "CLOUDPROVIDER"
+    "CLOUDREGION"
+    "CLUSTER"
+    "EMAIL"
+    "ENVIRONMENT"
+    "GRPCENDPOINT"
+    "KAPPA_SAMPLE_RATIO"
+    "KUBEMETA_VERSION"
+    "MAXGRPCPAYLOAD"
+    "PLAN"
+    "TOKEN"
+    "UUID"
+    "KAPPA_AGG_CPU_REQUEST"
+    "KAPPA_AGG_CPU_LIMIT"
+    "KAPPA_AGG_MEM_REQUEST"
+    "KAPPA_AGG_MEM_LIMIT"
+    "KAPPA_AGENT_CPU_REQUEST"
+    "KAPPA_AGENT_CPU_LIMIT"
+    "KAPPA_AGENT_MEM_REQUEST"
+    "KAPPA_AGENT_MEM_LIMIT"
+    "KUBEINFO_CPU_REQUEST"
+    "KUBEINFO_CPU_LIMIT"
+    "KUBEINFO_MEM_REQUEST"
+    "KUBEINFO_MEM_LIMIT"
+    "KUBEMETA_CPU_REQUEST"
+    "KUBEMETA_CPU_LIMIT"
+    "KUBEMETA_MEM_REQUEST"
+    "KUBEMETA_MEM_LIMIT"
+)
+
+# Construct the sed command
+sed_cmd="sed"
+for var in "${vars[@]}"; do
+    sed_cmd+=" -e 's/__${var}__/${!var}/g'"
+done
+sed_cmd+=" kustomization-template.yml > kustomization.yml"
+
+# Execute the sed command
+eval $sed_cmd
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""

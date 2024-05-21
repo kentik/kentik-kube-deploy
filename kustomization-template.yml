@@ -34,13 +34,66 @@ configMapGenerator:
       - grpcendpoint=__GRPCENDPOINT__
       - maxgrpcpayload=__MAXGRPCPAYLOAD__
       - uuid=__UUID__
-patchesJson6902:
+# patchesJson6902:
 #   - target:
 #       group: "apps"
 #       version: v1
 #       kind: DaemonSet
 #       name: kappa-agent
 #     path: kappa-bytecode.yml
+patches:
+  - target:
+      kind: DaemonSet
+      name: kappa-agent
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: __KAPPA_AGENT_CPU_REQUEST__
+            memory: __KAPPA_AGENT_MEM_REQUEST__
+          limits:
+            cpu: __KAPPA_AGENT_CPU_LIMIT__
+            memory: __KAPPA_AGENT_MEM_LIMIT__
+  - target:
+      kind: Deployment
+      name: kappa-agg
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: __KAPPA_AGG_CPU_REQUEST__
+            memory: __KAPPA_AGG_MEM_REQUEST__
+          limits:
+            cpu: __KAPPA_AGG_CPU_LIMIT__
+            memory: __KAPPA_AGG_MEM_LIMIT__
+  - target:
+      kind: Deployment
+      name: kubeinfo
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: __KUBEINFO_CPU_REQUEST__
+            memory: __KUBEINFO_MEM_REQUEST__
+          limits:
+            cpu: __KUBEINFO_CPU_LIMIT__
+            memory: __KUBEINFO_MEM_LIMIT__
+  - target:
+      kind: Deployment
+      name: kubemeta-deployment
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: __KUBEMETA_CPU_REQUEST__
+            memory: __KUBEMETA_MEM_REQUEST__
+          limits:
+            cpu: __KUBEMETA_CPU_LIMIT__
+            memory: __KUBEMETA_MEM_LIMIT__
 secretGenerator:
   - name: kentik-api-secrets
     literals:
