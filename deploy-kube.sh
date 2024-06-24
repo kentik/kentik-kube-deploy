@@ -29,33 +29,36 @@ KUBEMETA_VERSION=sha-63a15e9
 MAX_PAYLOAD_SIZE_MB=64
 KAPPA_SAMPLE_RATIO=1:4
 
-# ######################
+# ##############################################################################
 #
-# RAM / CPU limits
+#               OPTIONAL RAM / CPU resource configuration
+#
+#     --> UNCOMMENT ANY OF THE BELOW VALUES TO HAVE THOSE RESOURCES SET <--
+#
 #   'request' values are the minimum resources that the pod will be guaranteed
 #   'limit' values are the maximum resources that the pod will be allowed to use
 #
 #   cpu is measured in millicores (m), memory is measured in bytes (e.g., 100Mi)
 #
-KAPPA_AGG_CPU_REQUEST=5m        # default: 5m
-KAPPA_AGG_CPU_LIMIT=50m         # default: 50m
-KAPPA_AGG_MEM_REQUEST=100Mi     # default: 100Mi
-KAPPA_AGG_MEM_LIMIT=1Gi         # default: 1Gi
+# KAPPA_AGG_CPU_REQUEST=5m        # default: 5m
+# KAPPA_AGG_CPU_LIMIT=50m         # default: 50m
+# KAPPA_AGG_MEM_REQUEST=100Mi     # default: 100Mi
+# KAPPA_AGG_MEM_LIMIT=1Gi         # default: 1Gi
 
-KAPPA_AGENT_CPU_REQUEST=5m      # default: 5m
-KAPPA_AGENT_CPU_LIMIT=50m       # default: 50m
-KAPPA_AGENT_MEM_REQUEST=150Mi   # default: 150Mi
-KAPPA_AGENT_MEM_LIMIT=2Gi       # default: 2Gi
+# KAPPA_AGENT_CPU_REQUEST=5m      # default: 5m
+# KAPPA_AGENT_CPU_LIMIT=50m       # default: 50m
+# KAPPA_AGENT_MEM_REQUEST=150Mi   # default: 150Mi
+# KAPPA_AGENT_MEM_LIMIT=2Gi       # default: 2Gi
 
-KUBEINFO_CPU_REQUEST=5m         # default: 5m
-KUBEINFO_CPU_LIMIT=50m          # default: 50m
-KUBEINFO_MEM_REQUEST=100Mi      # default: 100Mi
-KUBEINFO_MEM_LIMIT=1Gi          # default: 1Gi
+# KUBEINFO_CPU_REQUEST=5m         # default: 5m
+# KUBEINFO_CPU_LIMIT=50m          # default: 50m
+# KUBEINFO_MEM_REQUEST=100Mi      # default: 100Mi
+# KUBEINFO_MEM_LIMIT=1Gi          # default: 1Gi
 
-KUBEMETA_CPU_REQUEST=5m         # default: 5m
-KUBEMETA_CPU_LIMIT=50m          # default: 50m
-KUBEMETA_MEM_REQUEST=100Mi      # default: 100Mi
-KUBEMETA_MEM_LIMIT=1Gi          # default: 1Gi
+# KUBEMETA_CPU_REQUEST=5m         # default: 5m
+# KUBEMETA_CPU_LIMIT=50m          # default: 50m
+# KUBEMETA_MEM_REQUEST=100Mi      # default: 100Mi
+# KUBEMETA_MEM_LIMIT=1Gi          # default: 1Gi
 
 # ######################
 #
@@ -142,6 +145,46 @@ get_or_create_cluster_uuid() {
   fi
 }
 
+# if any of the cpu/mem resource values are set, generate patches for them
+generate_patches() {
+    local patches=""
+    local targets=("kappa-agent" "kappa-agg" "kubeinfo" "kubemeta-deployment")
+    local config_name=("KAPPA_AGENT" "KAPPA_AGG" "KUBEINFO" "KUBEMETA")
+    local kinds=("DaemonSet" "Deployment" "Deployment" "Deployment")
+
+    for i in "${!targets[@]}"; do
+        local target="${targets[$i]}"
+        local kind="${kinds[$i]}"
+
+        local cpu_request="${config_name[$i]}_CPU_REQUEST"
+        local cpu_limit="${config_name[$i]}_CPU_LIMIT"
+        local mem_request="${config_name[$i]}_MEM_REQUEST"
+        local mem_limit="${config_name[$i]}_MEM_LIMIT"
+
+        # are any of the resource values set?
+        if [[ -n "${!cpu_request}" || -n "${!cpu_limit}" || -n "${!mem_request}" || -n "${!mem_limit}" ]]; then
+            patches+="  - target:\n      kind: $kind\n      name: $target\n    patch: |-\n"
+            patches+="      - op: add\n        path: /spec/template/spec/containers/0/resources\n        value:\n"
+
+            # add requests if either CPU or memory request is set
+            if [[ -n "${!cpu_request}" || -n "${!mem_request}" ]]; then
+                patches+="          requests:\n"
+                [[ -n "${!cpu_request}" ]] && patches+="            cpu: ${!cpu_request}\n"
+                [[ -n "${!mem_request}" ]] && patches+="            memory: ${!mem_request}\n"
+            fi
+
+            # add limits if either CPU or memory limit is set
+            if [[ -n "${!cpu_limit}" || -n "${!mem_limit}" ]]; then
+                patches+="          limits:\n"
+                [[ -n "${!cpu_limit}" ]] && patches+="            cpu: ${!cpu_limit}\n"
+                [[ -n "${!mem_limit}" ]] && patches+="            memory: ${!mem_limit}\n"
+            fi
+        fi
+    done
+
+    echo "$patches"
+}
+
 # some optional commandline args
 while getopts 'c:f:h' flag; do
     case "${flag}" in
@@ -173,7 +216,6 @@ fi
 # convert MAX_PAYLOAD_SIZE_MB to bytes
 MAXGRPCPAYLOAD=$((MAX_PAYLOAD_SIZE_MB * 1024 * 1024))
 
-
 echo "Going to apply the kube yaml configuration with the following values:"
 echo
 echo "Account Region: $ACCOUNTREGION"
@@ -190,14 +232,14 @@ echo "Kappa Sample:   $KAPPA_SAMPLE_RATIO"
 echo "Kubemeta:       $KUBEMETA_VERSION"
 echo "MaxPayload:     ${MAX_PAYLOAD_SIZE_MB}MB"
 echo
-echo "Kappa Agent CPU Request/Limit: ${KAPPA_AGENT_CPU_REQUEST}/${KAPPA_AGENT_CPU_LIMIT}"
-echo "Kappa Agent Mem Request/Limit: ${KAPPA_AGENT_MEM_REQUEST}/${KAPPA_AGENT_MEM_LIMIT}"
-echo "Kappa Agg CPU Request/Limit:   ${KAPPA_AGG_CPU_REQUEST}/${KAPPA_AGG_CPU_LIMIT}"
-echo "Kappa Agg Mem Request/Limit:   ${KAPPA_AGG_MEM_REQUEST}/${KAPPA_AGG_MEM_LIMIT}"
-echo "Kubeinfo CPU Request/Limit:    ${KUBEINFO_CPU_REQUEST}/${KUBEINFO_CPU_LIMIT}"
-echo "Kubeinfo Mem Request/Limit:    ${KUBEINFO_MEM_REQUEST}/${KUBEINFO_MEM_LIMIT}"
-echo "Kubemeta CPU Request/Limit:    ${KUBEMETA_CPU_REQUEST}/${KUBEMETA_CPU_LIMIT}"
-echo "Kubemeta Mem Request/Limit:    ${KUBEMETA_MEM_REQUEST}/${KUBEMETA_MEM_LIMIT}"
+echo "Kappa Agent CPU Request/Limit: ${KAPPA_AGENT_CPU_REQUEST:-"(unset)"}/${KAPPA_AGENT_CPU_LIMIT:-"(unset)"}"
+echo "Kappa Agent Mem Request/Limit: ${KAPPA_AGENT_MEM_REQUEST:-"(unset)"}/${KAPPA_AGENT_MEM_LIMIT:-"(unset)"}"
+echo "Kappa Agg CPU Request/Limit:   ${KAPPA_AGG_CPU_REQUEST:-"(unset)"}/${KAPPA_AGG_CPU_LIMIT:-"(unset)"}"
+echo "Kappa Agg Mem Request/Limit:   ${KAPPA_AGG_MEM_REQUEST:-"(unset)"}/${KAPPA_AGG_MEM_LIMIT:-"(unset)"}"
+echo "Kubeinfo CPU Request/Limit:    ${KUBEINFO_CPU_REQUEST:-"(unset)"}/${KUBEINFO_CPU_LIMIT:-"(unset)"}"
+echo "Kubeinfo Mem Request/Limit:    ${KUBEINFO_MEM_REQUEST:-"(unset)"}/${KUBEINFO_MEM_LIMIT:-"(unset)"}"
+echo "Kubemeta CPU Request/Limit:    ${KUBEMETA_CPU_REQUEST:-"(unset)"}/${KUBEMETA_CPU_LIMIT:-"(unset)"}"
+echo "Kubemeta Mem Request/Limit:    ${KUBEMETA_MEM_REQUEST:-"(unset)"}/${KUBEMETA_MEM_LIMIT:-"(unset)"}"
 echo
 read -p "Do you want to proceed (y/n)? " confirmation
 
@@ -239,23 +281,9 @@ vars=(
     "PLAN"
     "TOKEN"
     "UUID"
-    "KAPPA_AGG_CPU_REQUEST"
-    "KAPPA_AGG_CPU_LIMIT"
-    "KAPPA_AGG_MEM_REQUEST"
-    "KAPPA_AGG_MEM_LIMIT"
-    "KAPPA_AGENT_CPU_REQUEST"
-    "KAPPA_AGENT_CPU_LIMIT"
-    "KAPPA_AGENT_MEM_REQUEST"
-    "KAPPA_AGENT_MEM_LIMIT"
-    "KUBEINFO_CPU_REQUEST"
-    "KUBEINFO_CPU_LIMIT"
-    "KUBEINFO_MEM_REQUEST"
-    "KUBEINFO_MEM_LIMIT"
-    "KUBEMETA_CPU_REQUEST"
-    "KUBEMETA_CPU_LIMIT"
-    "KUBEMETA_MEM_REQUEST"
-    "KUBEMETA_MEM_LIMIT"
 )
+
+patches=$(generate_patches)
 
 # Construct the sed command
 sed_cmd="sed"
@@ -266,6 +294,12 @@ sed_cmd+=" kustomization-template.yml > kustomization.yml"
 
 # Execute the sed command
 eval $sed_cmd
+
+# Add the patches, if any
+if [[ -n "$patches" ]]; then
+    echo -e "patches:" >> kustomization.yml
+    echo -e "$patches" >> kustomization.yml
+fi
 
 # Set kubeconfig and context variables if provided
 KUBECONF=""
