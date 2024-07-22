@@ -26,7 +26,7 @@ CLUSTER=your_cluster_name
 #
 CAPTURE='en*|veth.*|eth*'
 KUBEMETA_VERSION=sha-63a15e9
-MAX_PAYLOAD_SIZE_MB=64
+MAX_PAYLOAD_SIZE_MB=256
 KAPPA_SAMPLE_RATIO=1:4
 
 # ##############################################################################
